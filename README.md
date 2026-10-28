@@ -71,5 +71,5 @@ uvicorn main:app --host 0.0.0.0 --port 8000
     安全说明：本项目仅作为内部互动 Demo，未接入复杂的鉴权体系。请勿将控制台地址公开发布。
 
 
-<img width="895" height="372" alt="图片" src="https://github.com/user-attachments/assets/eabbb39f-b89c-4e59-9d96-e518d1781ece" />
+
 
