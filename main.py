@@ -13,6 +13,7 @@ import asyncio
 import json
 import logging
 import sqlite3
+import sys
 import uuid
 from contextlib import asynccontextmanager, contextmanager
 from datetime import datetime
@@ -39,10 +40,22 @@ from pydantic import BaseModel, Field
 logger = logging.getLogger("annual-party")
 
 BASE_DIR = Path(__file__).resolve().parent
-STATIC_DIR = BASE_DIR / "static"
+
+# PyInstaller 单文件模式会把 templates/static 解压到临时目录 _MEIPASS；
+# 源码运行时则直接使用项目目录。
+RESOURCE_DIR = Path(getattr(sys, "_MEIPASS", BASE_DIR))
+
+# 可写数据放在 exe 同目录，保证奖项预设能在多次启动之间保留。
+APP_DIR = (
+    Path(sys.executable).resolve().parent
+    if getattr(sys, "frozen", False)
+    else BASE_DIR
+)
+
+STATIC_DIR = RESOURCE_DIR / "static"
 AVATAR_DIR = STATIC_DIR / "avatars"
-TEMPLATES_DIR = BASE_DIR / "templates"
-DB_PATH = BASE_DIR / "lottery.db"
+TEMPLATES_DIR = RESOURCE_DIR / "templates"
+DB_PATH = APP_DIR / "lottery.db"
 
 AVATAR_DIR.mkdir(parents=True, exist_ok=True)
 TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
@@ -680,4 +693,8 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    if getattr(sys, "frozen", False):
+        # 打包后的单文件程序不能再用 "main:app" 字符串导入，直接传 app 对象。
+        uvicorn.run(app, host="0.0.0.0", port=8000)
+    else:
+        uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
