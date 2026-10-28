@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#060812">
+  <title>星光年会 · 大屏</title>
+  <link rel="stylesheet" href="/static/css/common.css">
+  <style>
+    body.screen-page {
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: clamp(16px, 2.2vh, 28px) clamp(20px, 2.6vw, 48px) clamp(14px, 2vh, 24px);
+      gap: clamp(12px, 1.6vh, 20px);
+    }
+
+    /* ---------- 顶栏 ---------- */
+    .topbar {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      flex: 0 0 auto;
+      place-items: center;
+      width: clamp(44px, 4vw, 62px);
+      height: clamp(44px, 4vw, 62px);
+      border: 1px solid rgba(246, 196, 83, 0.45);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, rgba(246, 196, 83, 0.35), rgba(246, 196, 83, 0.05));
+      color: var(--gold-light);
+      font-size: clamp(1.2rem, 1.6vw, 1.8rem);
+      box-shadow: 0 0 34px rgba(246, 196, 83, 0.18);
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      line-height: 1.1;
+      background: linear-gradient(110deg, #ffffff 10%, #ffe9a6 55%, #f6c453 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .brand-text p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: clamp(0.58rem, 0.72vw, 0.76rem);
+      font-weight: 600;
+      letter-spacing: 0.34em;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2.2vw, 34px);
+    }
+
+    .stats {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2vw, 30px);
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: clamp(0.64rem, 0.78vw, 0.82rem);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    .stat b {
+      font-size: clamp(1.5rem, 2.2vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      background: linear-gradient(180deg, #fff8e1, #f6c453);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .qr-card {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      padding: 9px 9px 8px;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(246, 196, 83, 0.25);
+    }
+
+    .qr-box {
+      display: grid;
+      place-items: center;
+      width: clamp(104px, 9.2vw, 154px);
+      height: clamp(104px, 9.2vw, 154px);
+      overflow: hidden;
+      border-radius: 10px;
+      background: #fff;
+      color: #0b1020;
+      font-size: 0.62rem;
+      text-align: center;
+    }
+
+    .qr-box img,
+    .qr-box canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .qr-link {
+      display: block;
+      padding: 6px;
+      color: #0b1020;
+      font-size: 0.56rem;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .qr-caption {
+      color: #0b1020;
+      font-size: clamp(0.6rem, 0.72vw, 0.76rem);
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* ---------- 头像墙 ---------- */
+    .wall-wrap {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .wall {
+      display: grid;
+      flex: 1;
+      grid-template-columns: repeat(auto-fill, minmax(clamp(76px, 6.6vw, 122px), 1fr));
+      gap: clamp(14px, 1.4vw, 24px) clamp(10px, 1vw, 18px);
+      align-content: start;
+      padding: 8px 8px 14px 2px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .user-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(6px, 0.55vw, 10px);
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      animation: cardIn 0.55s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+      transition: transform 0.25s ease;
+    }
+
+    .user-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .user-card.is-new {
+      animation: cardIn 0.55s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+    }
+
+    .user-card.is-new .avatar-frame {
+      animation: newAvatarGlow 2.6s ease-out 0.2s both;
+    }
+
+    .avatar-frame {
+      position: relative;
+      flex: 0 0 auto;
+      width: clamp(56px, 5.2vw, 96px);
+      height: clamp(56px, 5.2vw, 96px);
+      aspect-ratio: 1 / 1;
+      padding: 2px;
+      overflow: hidden;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #ffe9a6, rgba(246, 196, 83, 0.9) 55%, #c7912b);
+      box-shadow: 0 0 0 1px rgba(246, 196, 83, 0.1), 0 8px 20px rgba(0, 0, 0, 0.24);
+      transition: filter 0.35s ease, opacity 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .avatar-frame .avatar {
+      display: block;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .crown {
+      position: absolute;
+      top: -18%;
+      right: -9%;
+      font-size: clamp(0.8rem, 1vw, 1.25rem);
+      line-height: 1;
+      animation: crownIn 0.35s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+    }
+
+    .user-name {
+      width: 100%;
+      margin: 0;
+      overflow: hidden;
+      color: rgba(244, 246, 251, 0.82);
+      font-size: clamp(0.62rem, 0.72vw, 0.82rem);
+      font-weight: 500;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: filter 0.35s ease, opacity 0.35s ease, color 0.35s ease;
+    }
+
+    .user-card.winner .avatar-frame {
+      background: linear-gradient(145deg, #ffe9a6, #f6c453 60%, #d99a1c);
+      box-shadow: 0 0 22px rgba(246, 196, 83, 0.45);
+    }
+
+    .user-card.winner .user-name {
+      color: var(--gold-light);
+    }
+
+    .empty-state {
+      display: flex;
+      grid-column: 1 / -1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 46vh;
+      gap: 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-state p {
+      margin: 0;
+      font-size: clamp(1rem, 1.2vw, 1.3rem);
+      letter-spacing: 0.08em;
+    }
+
+    .empty-sub {
+      color: rgba(147, 160, 184, 0.65);
+      font-size: clamp(0.68rem, 0.8vw, 0.82rem);
+      letter-spacing: 0.06em;
+      overflow-wrap: anywhere;
+    }
+
+    .pulse-rings {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      display: grid;
+      place-items: center;
+    }
+
+    .pulse-rings span {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(246, 196, 83, 0.5);
+      border-radius: 50%;
+      animation: pulseRing 2.6s ease-out infinite;
+    }
+
+    .pulse-rings span:nth-child(2) {
+      animation-delay: 0.85s;
+    }
+
+    .pulse-rings span:nth-child(3) {
+      animation-delay: 1.7s;
+    }
+
+    .pulse-rings::after {
+      content: "✦";
+      color: var(--gold);
+      font-size: 1.5rem;
+      text-shadow: 0 0 20px rgba(246, 196, 83, 0.7);
+    }
+
+    /* ---------- 底栏 ---------- */
+    .dock {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: clamp(10px, 1.2vh, 16px) clamp(14px, 1.4vw, 22px);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.02));
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .dock-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: clamp(0.68rem, 0.82vw, 0.88rem);
+      letter-spacing: 0.04em;
+    }
+
+    .dock-note span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dock-tip {
+      display: flex;
+      flex: 1 1 auto;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      padding: clamp(6px, 0.7vh, 10px) clamp(12px, 1.3vw, 20px);
+      border: 1px solid rgba(246, 196, 83, 0.2);
+      border-radius: 999px;
+      background: rgba(246, 196, 83, 0.07);
+      color: var(--gold-light);
+      font-size: clamp(0.7rem, 0.84vw, 0.92rem);
+      font-weight: 700;
+      letter-spacing: 0.045em;
+      text-align: center;
+      text-shadow: 0 0 18px rgba(246, 196, 83, 0.35);
+    }
+
+    .dock-tip span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .draw-btn {
+      flex: 0 0 auto;
+      padding: clamp(0.72em, 1vh, 0.9em) clamp(1.2em, 1.8vw, 2em);
+      font-size: clamp(0.82rem, 1vw, 1.05rem);
+      letter-spacing: 0.08em;
+    }
+
+    /* ---------- 弹幕 ---------- */
+    .danmaku-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .danmaku {
+      position: absolute;
+      left: 100%;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 2px;
+      padding: clamp(6px, 0.6vw, 10px) clamp(14px, 1.2vw, 22px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      background: rgba(7, 10, 22, 0.62);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      white-space: nowrap;
+      will-change: transform;
+      animation-name: danmakuMove;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    .dm-name {
+      color: var(--gold-light);
+      font-weight: 800;
+    }
+
+    .dm-name::after {
+      content: "：";
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 400;
+    }
+
+    .dm-text {
+      color: #fff;
+      font-size: clamp(0.9rem, 1.25vw, 1.4rem);
+    }
+
+    .danmaku.danmaku-enter {
+      border-color: rgba(246, 196, 83, 0.55);
+      background: linear-gradient(110deg, rgba(246, 196, 83, 0.2), rgba(7, 10, 22, 0.72));
+      box-shadow: 0 8px 30px rgba(246, 196, 83, 0.2);
+    }
+
+    /* ---------- 抽奖揭晓 ---------- */
+    .draw-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: rgba(4, 6, 14, 0.84);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      opacity: 0;
+      visibility: hidden;
+      cursor: pointer;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .draw-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .draw-glow {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(1100px, 90vw);
+      height: min(1100px, 90vw);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(246, 196, 83, 0.22), rgba(246, 196, 83, 0.04) 45%, transparent 70%);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .draw-content {
+      position: relative;
+      z-index: 2;
+      padding: 24px;
+      text-align: center;
+      transform: scale(0.92);
+      transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    .draw-overlay.show .draw-content {
+      transform: scale(1);
+    }
+
+    .draw-kicker {
+      margin: 0 0 14px;
+      color: rgba(246, 196, 83, 0.75);
+      font-size: clamp(0.62rem, 0.8vw, 0.82rem);
+      font-weight: 700;
+      letter-spacing: 0.42em;
+    }
+
+    .draw-title {
+      margin: 0;
+      font-size: clamp(2rem, 3.8vw, 4rem);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      background: linear-gradient(115deg, #fff8e1 10%, #f6c453 55%, #ff9d6b 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 8px 30px rgba(246, 196, 83, 0.2));
+    }
+
+    .winner-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: center;
+      gap: clamp(18px, 3vw, 52px);
+      margin: clamp(26px, 4vh, 48px) 0 clamp(20px, 3vh, 34px);
+    }
+
+    .winner-card {
+      --winner-size: clamp(148px, 14vw, 238px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      min-width: clamp(178px, 16vw, 280px);
+      padding: clamp(18px, 2vw, 30px) clamp(18px, 2.2vw, 36px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 30px;
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025));
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4);
+    }
+
+    .winner-row.many .winner-card {
+      --winner-size: clamp(104px, 9.5vw, 168px);
+      min-width: clamp(140px, 12vw, 210px);
+      gap: 12px;
+      padding: clamp(14px, 1.5vw, 24px) clamp(14px, 1.6vw, 28px);
+      border-radius: 24px;
+    }
+
+    .winner-avatar-frame {
+      position: relative;
+      flex: 0 0 auto;
+      width: var(--winner-size);
+      height: var(--winner-size);
+      aspect-ratio: 1 / 1;
+      padding: 4px;
+      overflow: hidden;
+      border-radius: 50%;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.08));
+    }
+
+    .winner-avatar {
+      display: block;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .winner-crown {
+      position: absolute;
+      top: -14%;
+      right: -4%;
+      font-size: clamp(1.6rem, 2.4vw, 2.8rem);
+      line-height: 1;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+      opacity: 0;
+      transform: scale(0.4) rotate(-16deg);
+      transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.2, 1.6, 0.4, 1);
+    }
+
+    .winner-name {
+      max-width: 100%;
+      overflow: hidden;
+      color: #fff;
+      font-size: clamp(1.15rem, 1.8vw, 1.9rem);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .winner-row.many .winner-name {
+      font-size: clamp(0.95rem, 1.3vw, 1.35rem);
+    }
+
+    .winner-dept {
+      min-height: 1.1em;
+      margin-top: -9px;
+      color: rgba(200, 210, 230, 0.82);
+      font-size: clamp(0.72rem, 0.95vw, 1rem);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-align: center;
+    }
+
+    .winner-row.many .winner-dept {
+      margin-top: -6px;
+      font-size: clamp(0.64rem, 0.8vw, 0.82rem);
+    }
+
+    .winner-card.settled .winner-dept {
+      color: rgba(255, 236, 180, 0.92);
+    }
+
+    .winner-card.rolling .winner-avatar {
+      filter: blur(1.5px) saturate(0.7);
+      opacity: 0.85;
+    }
+
+    .winner-card.rolling .winner-name {
+      color: var(--muted);
+    }
+
+    .winner-card.settled {
+      border-color: rgba(246, 196, 83, 0.6);
+      background: linear-gradient(165deg, rgba(246, 196, 83, 0.2), rgba(246, 196, 83, 0.045));
+      box-shadow: 0 0 60px rgba(246, 196, 83, 0.32), 0 30px 70px rgba(0, 0, 0, 0.4);
+      animation: winnerPop 0.65s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+    }
+
+    .winner-card.settled .winner-avatar-frame {
+      background: linear-gradient(145deg, #ffe9a6, #f6c453 55%, #d99a1c);
+      box-shadow: 0 0 36px rgba(246, 196, 83, 0.55);
+    }
+
+    .winner-card.settled .winner-crown {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+
+    .winner-card.settled .winner-name {
+      color: var(--gold-light);
+      text-shadow: 0 0 28px rgba(246, 196, 83, 0.35);
+    }
+
+    .draw-overlay.reveal .draw-glow {
+      animation: goldFlash 0.55s ease-out 3;
+    }
+
+    .draw-hint {
+      margin: 0;
+      color: rgba(147, 160, 184, 0.8);
+      font-size: clamp(0.68rem, 0.86vw, 0.88rem);
+      letter-spacing: 0.14em;
+    }
+
+    .confetti {
+      position: absolute;
+      top: -24px;
+      z-index: 1;
+      border-radius: 2px;
+      pointer-events: none;
+      animation-name: confettiFall;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    /* ---------- 动画 ---------- */
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.94);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes newAvatarGlow {
+      0%,
+      100% {
+        box-shadow: 0 0 0 1px rgba(246, 196, 83, 0.1), 0 8px 20px rgba(0, 0, 0, 0.24);
+      }
+      30% {
+        box-shadow: 0 0 38px rgba(246, 196, 83, 0.62);
+      }
+    }
+
+    @keyframes crownIn {
+      from {
+        opacity: 0;
+        transform: scale(0.4) rotate(-14deg);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+      }
+    }
+
+    @keyframes pulseRing {
+      0% {
+        transform: scale(0.45);
+        opacity: 0.8;
+      }
+      80%,
+      100% {
+        transform: scale(1.55);
+        opacity: 0;
+      }
+    }
+
+    @keyframes danmakuMove {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(calc(-100vw - 100%));
+      }
+    }
+
+    @keyframes winnerPop {
+      0% {
+        transform: scale(0.72);
+        filter: blur(10px);
+        opacity: 0.25;
+      }
+      62% {
+        transform: scale(1.06);
+        filter: blur(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        filter: blur(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes goldFlash {
+      0% {
+        opacity: 0.2;
+      }
+      45% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.25;
+      }
+    }
+
+    @keyframes confettiFall {
+      from {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(115vh) rotate(760deg);
+        opacity: 0.35;
+      }
+    }
+  </style>
+</head>
+<body class="screen-page">
+  <div class="stage">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">✦</div>
+        <div class="brand-text">
+          <h1>星光年会</h1>
+          <p>ANNUAL PARTY · LIVE WALL</p>
+        </div>
+      </div>
+
+      <div class="top-right">
+        <div class="stats">
+          <div class="stat">
+            <span>已签到</span>
+            <b id="userCount">0</b>
+          </div>
+        </div>
+        <div class="qr-card">
+          <div id="qrcode" class="qr-box">
+            <span>二维码加载中…</span>
+          </div>
+          <div class="qr-caption">手机扫码签到</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="wall-wrap">
+      <div class="wall scrollable" id="wall">
+        <div class="empty-state" id="emptyState">
+          <div class="pulse-rings" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <p>等待第一位同事扫码签到…</p>
+          <span class="empty-sub" id="emptyUrl"></span>
+        </div>
+      </div>
+    </main>
+
+    <footer class="dock">
+      <div class="dock-note">
+        <i class="dot online" id="dockDot"></i>
+        <span id="dockNote">实时同步中 · 扫码上传头像即可登上星光墙</span>
+      </div>
+      <div class="dock-tip" role="note">
+        <span>💡 温馨提示：抽奖时请保持签到界面开启，关闭页面将失去抽奖资格</span>
+      </div>
+      <button type="button" class="btn btn-gold draw-btn" id="drawBtn">
+        <span aria-hidden="true">🎲</span>
+        <span>抽取 1 位幸运星</span>
+      </button>
+    </footer>
+  </div>
+
+  <div class="danmaku-layer" id="danmakuLayer" aria-hidden="true"></div>
+
+  <div class="draw-overlay" id="drawOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="draw-glow" aria-hidden="true"></div>
+    <div class="draw-content">
+      <p class="draw-kicker">LUCKY MOMENT</p>
+      <h2 class="draw-title">幸运星揭晓</h2>
+      <div class="winner-row" id="winnerRow"></div>
+      <p class="draw-hint" id="drawHint">抽取中…</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="/static/js/common.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const wall = document.getElementById("wall");
+      const emptyState = document.getElementById("emptyState");
+      const emptyUrl = document.getElementById("emptyUrl");
+      const userCountEl = document.getElementById("userCount");
+      const dockDot = document.getElementById("dockDot");
+      const dockNote = document.getElementById("dockNote");
+      const drawBtn = document.getElementById("drawBtn");
+      const danmakuLayer = document.getElementById("danmakuLayer");
+      const overlay = document.getElementById("drawOverlay");
+      const winnerRow = document.getElementById("winnerRow");
+      const drawHint = document.getElementById("drawHint");
+
+      const registerUrl = window.location.origin + "/register";
+      const DRAW_ROLL_MS = 6000;
+      const CONFETTI_COLORS = ["#f6c453", "#ffe59a", "#ff5d73", "#7c9cff", "#4ade80", "#ffffff"];
+      const WARMUP_LINES = [
+        "大奖一定是我的！",
+        "冲鸭！",
+        "老板大气！",
+        "今晚我是最亮的星 ✨",
+        "抽我抽我抽我！",
+        "年会快乐，万事顺意～",
+        "锦鲤附体，欧气满满！",
+        "这波必须中！",
+        "前排沾沾喜气 🍀",
+        "明年继续一起加油！",
+      ];
+
+      let users = [];
+      const userMap = new Map();
+      let ws = null;
+      let drawPlaying = false;
+      let resultsReady = false;
+      let closeTimer = null;
+      let pendingWinners = null;
+      let laneLast = [];
+
+      function displayName(user) {
+        return (user && (user.nickname || user.name)) || "神秘嘉宾";
+      }
+
+      function winnerName(user) {
+        return (user && (user.real_name || user.nickname || user.name)) || "神秘嘉宾";
+      }
+
+      /* ---------------- 二维码 ---------------- */
+      function setupQRCode() {
+        emptyUrl.textContent = registerUrl;
+        const box = document.getElementById("qrcode");
+        if (!window.QRCode) {
+          box.innerHTML = "";
+          const link = document.createElement("a");
+          link.className = "qr-link";
+          link.href = "/register";
+          link.textContent = registerUrl;
+          box.appendChild(link);
+          return;
+        }
+        box.innerHTML = "";
+        new QRCode(box, {
+          text: registerUrl,
+          width: 360,
+          height: 360,
+          colorDark: "#0b1020",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M,
+        });
+      }
+
+      /* ---------------- 用户列表 ---------------- */
+      function makeCrown() {
+        const crown = document.createElement("span");
+        crown.className = "crown";
+        crown.textContent = "👑";
+        crown.setAttribute("aria-hidden", "true");
+        return crown;
+      }
+
+      function makeUserCard(user) {
+        const card = document.createElement("article");
+        card.className = "user-card" + (user.is_winner ? " winner" : "");
+        card.dataset.id = String(user.id);
+
+        const frame = document.createElement("div");
+        frame.className = "avatar-frame";
+
+        const img = document.createElement("img");
+        img.className = "avatar";
+        img.src = user.avatar_url;
+        img.alt = displayName(user);
+        img.loading = "lazy";
+        img.decoding = "async";
+
+        const name = document.createElement("p");
+        name.className = "user-name";
+        name.textContent = displayName(user);
+        name.title = [user.real_name, user.department].filter(Boolean).join(" · ");
+
+        frame.appendChild(img);
+        if (user.is_winner) frame.appendChild(makeCrown());
+        card.appendChild(frame);
+        card.appendChild(name);
+        return card;
+      }
+
+      function renderUsers() {
+        wall.innerHTML = "";
+        if (!users.length) {
+          wall.appendChild(emptyState);
+        } else {
+          const fragment = document.createDocumentFragment();
+          users.forEach(function (user) {
+            fragment.appendChild(makeUserCard(user));
+          });
+          wall.appendChild(fragment);
+        }
+        updateUserCount();
+      }
+
+      function updateUserCount() {
+        userCountEl.textContent = String(users.length);
+      }
+
+      async function loadUsers() {
+        try {
+          const data = await App.api("/api/users");
+          users = Array.isArray(data.users) ? data.users.slice() : [];
+          userMap.clear();
+          users.forEach(function (user) {
+            userMap.set(user.id, user);
+          });
+          renderUsers();
+        } catch (error) {
+          App.toast("加载签到墙失败：" + error.message, "error", 4200);
+        }
+      }
+
+      function addUser(user) {
+        if (!user || userMap.has(user.id)) return;
+        users.push(user);
+        userMap.set(user.id, user);
+        if (emptyState.parentNode) emptyState.remove();
+
+        const card = makeUserCard(user);
+        card.classList.add("is-new");
+        wall.appendChild(card);
+        if (typeof card.scrollIntoView === "function") {
+          card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+        updateUserCount();
+        App.toast("🎉 " + displayName(user) + " 签到成功", "success", 2200);
+      }
+
+      /* ---------------- 弹幕 ---------------- */
+      function spawnDanmaku(name, text, kind) {
+        if (danmakuLayer.childElementCount > 45) {
+          const first = danmakuLayer.firstElementChild;
+          if (first) first.remove();
+        }
+
+        const item = document.createElement("div");
+        item.className = "danmaku" + (kind === "enter" ? " danmaku-enter" : "");
+
+        const nameEl = document.createElement("span");
+        nameEl.className = "dm-name";
+        nameEl.textContent = name;
+
+        const textEl = document.createElement("span");
+        textEl.className = "dm-text";
+        textEl.textContent = text;
+
+        item.appendChild(nameEl);
+        item.appendChild(textEl);
+
+        const laneHeight = 54;
+        const maxLanes = Math.max(3, Math.floor((window.innerHeight * 0.62) / laneHeight));
+        if (laneLast.length !== maxLanes) {
+          laneLast = new Array(maxLanes).fill(0);
+        }
+        let lane = 0;
+        for (let i = 1; i < maxLanes; i += 1) {
+          if (laneLast[i] < laneLast[lane]) lane = i;
+        }
+        laneLast[lane] = Date.now();
+
+        item.style.top = (window.innerHeight * 0.13 + lane * laneHeight + Math.random() * 6) + "px";
+        const duration = Math.min(19, 9 + text.length * 0.22 + name.length * 0.12);
+        item.style.animationDuration = duration + "s";
+
+        danmakuLayer.appendChild(item);
+        item.addEventListener("animationend", function () {
+          item.remove();
+        });
+      }
+
+      function startWarmupDanmaku() {
+        window.setInterval(function () {
+          if (!users.length) return;
+          const user = pickRandom(users);
+          spawnDanmaku(displayName(user), pickRandom(WARMUP_LINES));
+        }, 10000);
+      }
+
+      /* ---------------- 抽奖动画 ---------------- */
+      function pickRandom(list) {
+        return list[Math.floor(Math.random() * list.length)];
+      }
+
+      function makeWinnerCard(winner) {
+        const card = document.createElement("div");
+        card.className = "winner-card rolling";
+
+        const frame = document.createElement("div");
+        frame.className = "winner-avatar-frame";
+
+        const img = document.createElement("img");
+        img.className = "winner-avatar";
+        img.alt = winnerName(winner);
+
+        const crown = document.createElement("span");
+        crown.className = "winner-crown";
+        crown.textContent = "👑";
+        crown.setAttribute("aria-hidden", "true");
+
+        const name = document.createElement("div");
+        name.className = "winner-name";
+        name.textContent = winnerName(winner);
+
+        const dept = document.createElement("div");
+        dept.className = "winner-dept";
+        dept.textContent = winner.department || "";
+
+        frame.appendChild(img);
+        frame.appendChild(crown);
+        card.appendChild(frame);
+        card.appendChild(name);
+        card.appendChild(dept);
+
+        return { el: card, img: img, name: name, dept: dept, winner: winner };
+      }
+
+      function setWinnerCard(card, user) {
+        card.img.src = user.avatar_url;
+        card.img.alt = winnerName(user);
+        card.name.textContent = winnerName(user);
+        card.dept.textContent = user.department || "";
+      }
+
+      function markWinner(winner) {
+        const cached = userMap.get(winner.id);
+        if (cached) cached.is_winner = 1;
+        const card = wall.querySelector('.user-card[data-id="' + winner.id + '"]');
+        if (!card) return;
+        card.classList.add("winner");
+        const frame = card.querySelector(".avatar-frame");
+        if (frame && !frame.querySelector(".crown")) {
+          frame.appendChild(makeCrown());
+        }
+      }
+
+      function handleDraw(winners) {
+        if (!Array.isArray(winners) || !winners.length) return;
+        winners.forEach(markWinner);
+        if (drawPlaying) {
+          pendingWinners = winners;
+          return;
+        }
+        playDraw(winners);
+      }
+
+      function playDraw(winners) {
+        drawPlaying = true;
+        resultsReady = false;
+        window.clearTimeout(closeTimer);
+        overlay.classList.add("show");
+        overlay.classList.remove("reveal");
+        overlay.setAttribute("aria-hidden", "false");
+        drawHint.textContent = "抽取中…";
+        winnerRow.innerHTML = "";
+        winnerRow.classList.toggle("many", winners.length > 1);
+
+        const pool = users.length ? users : winners;
+        const cards = winners.map(makeWinnerCard);
+        cards.forEach(function (card) {
+          setWinnerCard(card, pickRandom(pool));
+          winnerRow.appendChild(card.el);
+        });
+
+        const rollTimer = window.setInterval(function () {
+          cards.forEach(function (card) {
+            setWinnerCard(card, pickRandom(pool));
+          });
+        }, 80);
+
+        window.setTimeout(function () {
+          window.clearInterval(rollTimer);
+
+          cards.forEach(function (card, index) {
+            window.setTimeout(function () {
+              setWinnerCard(card, card.winner);
+              card.el.classList.remove("rolling");
+              card.el.classList.add("settled");
+            }, index * 220);
+          });
+
+          const revealDelay = cards.length * 220 + 180;
+          window.setTimeout(function () {
+            overlay.classList.add("reveal");
+            resultsReady = true;
+            drawHint.textContent = "点击任意位置继续";
+            burstConfetti();
+            closeTimer = window.setTimeout(closeDraw, 9000);
+          }, revealDelay);
+        }, DRAW_ROLL_MS);
+      }
+
+      function closeDraw() {
+        if (!overlay.classList.contains("show")) return;
+        window.clearTimeout(closeTimer);
+        overlay.classList.remove("show", "reveal");
+        overlay.setAttribute("aria-hidden", "true");
+        drawPlaying = false;
+        resultsReady = false;
+        overlay.querySelectorAll(".confetti").forEach(function (node) {
+          node.remove();
+        });
+
+        if (pendingWinners) {
+          const next = pendingWinners;
+          pendingWinners = null;
+          window.setTimeout(function () {
+            handleDraw(next);
+          }, 450);
+        }
+      }
+
+      function burstConfetti() {
+        overlay.querySelectorAll(".confetti").forEach(function (node) {
+          node.remove();
+        });
+        for (let i = 0; i < 54; i += 1) {
+          const piece = document.createElement("span");
+          piece.className = "confetti";
+          piece.style.left = Math.random() * 100 + "%";
+          piece.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+          piece.style.width = 5 + Math.random() * 7 + "px";
+          piece.style.height = 8 + Math.random() * 10 + "px";
+          piece.style.animationDelay = Math.random() * 0.45 + "s";
+          piece.style.animationDuration = 2.6 + Math.random() * 2.2 + "s";
+          overlay.appendChild(piece);
+        }
+      }
+
+      /* ---------------- WebSocket ---------------- */
+      function connectWS() {
+        ws = App.connectWS({
+          onStatus: function (status) {
+            const open = status === "open";
+            dockDot.className = "dot " + (open ? "online" : "offline");
+            dockNote.textContent = open
+              ? "实时同步中 · 扫码上传头像即可登上星光墙"
+              : "实时连接已断开，正在重连…";
+            if (open) loadUsers();
+          },
+          onMessage: function (message) {
+            switch (message.type) {
+              case "register":
+                addUser(message.user);
+                break;
+              case "danmaku":
+                spawnDanmaku(message.name, message.text, message.kind);
+                break;
+              case "leave": {
+                const leaveId = Number(message.user_id);
+                if (!Number.isFinite(leaveId)) break;
+                const leftCard = wall.querySelector('.user-card[data-id="' + leaveId + '"]');
+                if (leftCard) leftCard.remove();
+                userMap.delete(leaveId);
+                const leftIndex = users.findIndex(function (user) {
+                  return Number(user.id) === leaveId;
+                });
+                if (leftIndex !== -1) users.splice(leftIndex, 1);
+                updateUserCount();
+                if (!users.length) {
+                  wall.innerHTML = "";
+                  wall.appendChild(emptyState);
+                }
+                break;
+              }
+              case "draw":
+                handleDraw(message.winners);
+                break;
+              case "reset":
+                pendingWinners = null;
+                closeDraw();
+                users.forEach(function (user) {
+                  user.is_winner = 0;
+                });
+                wall.querySelectorAll(".user-card.winner").forEach(function (card) {
+                  card.classList.remove("winner");
+                });
+                wall.querySelectorAll(".user-card .crown").forEach(function (crown) {
+                  crown.remove();
+                });
+                App.toast("抽奖记录已重置", "info");
+                break;
+              default:
+                break;
+            }
+          },
+        });
+      }
+
+      /* ---------------- 事件 ---------------- */
+      drawBtn.addEventListener("click", async function () {
+        drawBtn.disabled = true;
+        try {
+          const data = await App.api("/api/draw?count=1", { method: "POST" });
+          // WebSocket 正常时由广播驱动动画，断线时用 HTTP 响应兜底
+          if (!ws || !ws.isOpen) {
+            handleDraw(data.winners);
+          }
+        } catch (error) {
+          App.toast(error.message, "error", 3600);
+        } finally {
+          window.setTimeout(function () {
+            drawBtn.disabled = false;
+          }, 3200);
+        }
+      });
+
+      overlay.addEventListener("click", function () {
+        if (resultsReady) closeDraw();
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && resultsReady) closeDraw();
+      });
+
+      /* ---------------- 启动 ---------------- */
+      setupQRCode();
+      loadUsers();
+      connectWS();
+      startWarmupDanmaku();
+    })();
+  </script>
+</body>
+</html>

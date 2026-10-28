@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables
+.env
+
+# SQLite databases and local backups
+*.db
+*.db*
+
+# Uploaded avatars
+static/avatars/*
+!static/avatars/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Test / coverage / tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editor / OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
