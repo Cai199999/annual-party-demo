@@ -69,3 +69,8 @@ uvicorn main:app --host 0.0.0.0 --port 8000
     数据重置：为了演示纯净度，系统默认在每次启动时清空数据库（签到名单）。若需保留，请在 main.py 中修改。
 
     安全说明：本项目仅作为内部互动 Demo，未接入复杂的鉴权体系。请勿将控制台地址公开发布。
+<img width="578" height="895" alt="图片" src="https://github.com/user-attachments/assets/ef3ed7c7-5e7c-4729-8f54-e406b5303cb0" />
+<img width="1367" height="885" alt="图片" src="https://github.com/user-attachments/assets/5aa8ee0a-58e9-4b95-8276-931fa99371aa" />
+<img width="1591" height="823" alt="图片" src="https://github.com/user-attachments/assets/41478f35-54c7-4fa5-8e19-919128c92113" />
+
+
